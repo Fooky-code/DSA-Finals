@@ -1,0 +1,105 @@
+INITIALIZE inventory as a dictionary containing categories:
+    'Food': an empty list
+    'Household Items': an empty list
+    'Others': an empty list
+
+WHILE true DO:
+    PROMPT user with "Do you want to add, remove, show, or end?"
+    STORE user response in action
+    
+    IF action is "end" THEN:
+        PRINT "Exiting inventory system."
+        TERMINATE loop
+    
+    ELSE IF action is "add" THEN:
+        PRINT category options:
+            "1. Food"
+            "2. Household Items"
+            "3. Others"
+        
+        PROMPT user to enter a category number (1-3)
+        STORE user input in category_choice
+        
+        SET categories as a list: ['Food', 'Household Items', 'Others']
+        
+        IF category_choice is valid (1-3) THEN:
+            SELECT category based on category_choice
+        ELSE:
+            PRINT "Invalid choice. Returning to main menu."
+            CONTINUE loop
+        
+        PROMPT user to enter product name
+        STORE input in name
+        
+        PROMPT user to enter quantity
+        TRY:
+            CONVERT input to an integer
+            IF quantity is not positive THEN:
+                PRINT "Quantity must be positive. Returning to main menu."
+                CONTINUE loop
+        CATCH error:
+            PRINT "Invalid quantity. Returning to main menu."
+            CONTINUE loop
+        
+        PROMPT user to enter expiration date
+        STORE input in expiration
+        
+        ADD dictionary containing name, quantity, and expiration to inventory[category]
+        PRINT confirmation message
+    
+    ELSE IF action is "remove" THEN:
+        PROMPT user to enter category to remove from (Food/Household Items/Others)
+        STORE input in category
+        
+        IF category is not in inventory THEN:
+            PRINT "Invalid category. Returning to main menu."
+            CONTINUE loop
+        
+        PROMPT user to enter product name to remove
+        STORE input in name
+        SET found flag to false
+        
+        ITERATE through inventory[category]:
+            IF item name matches input (case insensitive) THEN:
+                SET found flag to true
+                
+                PROMPT user to enter quantity to remove
+                TRY:
+                    CONVERT input to an integer
+                    IF quantity is not positive THEN:
+                        PRINT "Quantity must be positive."
+                        CONTINUE loop
+                CATCH error:
+                    PRINT "Invalid quantity."
+                    CONTINUE loop
+                
+                IF removal quantity exceeds available quantity THEN:
+                    PRINT "Error: Cannot remove more than available quantity."
+                ELSE:
+                    UPDATE item quantity by subtracting removal quantity
+                    IF item quantity becomes zero THEN:
+                        REMOVE item from inventory[category]
+                    PRINT confirmation message
+                
+                EXIT iteration
+        
+        IF found flag is still false THEN:
+            PRINT "Product not found in category"
+    
+    ELSE IF action is "show" THEN:
+        SET all_empty flag to true
+        
+        ITERATE through inventory categories:
+            IF category contains items THEN:
+                SET all_empty flag to false
+                PRINT category name
+                
+                ITERATE through items in category:
+                    PRINT item details: name, quantity, expiration date
+        
+        IF all_empty flag remains true THEN:
+            PRINT "No items in inventory."
+    
+    ELSE:
+        PRINT "Invalid action. Please enter add, remove, show, or end."
+END WHILE
